@@ -1,12 +1,13 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 import { 
   ArrowLeftIcon,
   BanknotesIcon,
   BuildingLibraryIcon,
   CheckBadgeIcon,
   ClockIcon,
-  ArrowPathIcon
+  ArrowPathIcon,
+  InformationCircleIcon
 } from '@heroicons/react/24/outline'
 
 export default function VendorWithdraw() {
@@ -16,8 +17,27 @@ export default function VendorWithdraw() {
   const [processing, setProcessing] = useState(false)
   const [success, setSuccess] = useState(false)
 
-  const availableBalance = 245000
-  const pendingBalance = 520000
+  // Mock data - replace with real data from backend
+  const vendor = {
+    balance: 245000,
+    pendingBalance: 520000,
+    documents: {
+      id: 'verified',
+      address: 'pending',
+      cac: 'uploaded'
+    },
+    bankDetails: {
+      accountNumber: '0123456789',
+      accountName: "Ade's Photography"
+    }
+  }
+
+  const availableBalance = vendor.balance
+  const pendingBalance = vendor.pendingBalance
+
+  // Check if all required documents are verified
+  const hasRequiredDocs = vendor.documents.id === 'verified' && 
+                          vendor.documents.address === 'verified'
 
   const banks = [
     'Access Bank',
@@ -39,6 +59,67 @@ export default function VendorWithdraw() {
         navigate('/vendor/dashboard')
       }, 2000)
     }, 2000)
+  }
+
+  // Show document requirement message if not verified
+  if (!hasRequiredDocs) {
+    return (
+      <div className="min-h-screen bg-[#FDF8F2]">
+        <div className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-10">
+          <div className="max-w-7xl mx-auto flex items-center gap-4">
+            <button onClick={() => navigate(-1)} className="text-[#0A5C5C]">
+              <ArrowLeftIcon className="w-5 h-5" />
+            </button>
+            <h1 className="text-xl font-bold text-[#2D3E50]">Withdraw Funds</h1>
+          </div>
+        </div>
+
+        <div className="max-w-2xl mx-auto px-4 py-12">
+          <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+            <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <InformationCircleIcon className="w-10 h-10 text-yellow-600" />
+            </div>
+            <h2 className="text-2xl font-bold text-[#2D3E50] mb-3">Documents Required</h2>
+            <p className="text-gray-600 mb-6">
+              You need to upload and verify your required documents before you can withdraw funds.
+            </p>
+            
+            <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+              <h3 className="font-medium text-[#2D3E50] mb-3">Document Status:</h3>
+              <ul className="space-y-2">
+                <li className="flex items-center justify-between">
+                  <span>Valid ID Card</span>
+                  {vendor.documents.id === 'verified' ? (
+                    <span className="text-green-600 text-sm">✓ Verified</span>
+                  ) : (
+                    <span className="text-yellow-600 text-sm">Pending</span>
+                  )}
+                </li>
+                <li className="flex items-center justify-between">
+                  <span>Proof of Address</span>
+                  {vendor.documents.address === 'verified' ? (
+                    <span className="text-green-600 text-sm">✓ Verified</span>
+                  ) : (
+                    <span className="text-yellow-600 text-sm">Pending</span>
+                  )}
+                </li>
+                <li className="flex items-center justify-between">
+                  <span>CAC Registration</span>
+                  <span className="text-gray-500 text-sm">Optional</span>
+                </li>
+              </ul>
+            </div>
+
+            <Link
+              to="/vendor/documents"
+              className="inline-block bg-[#0A5C5C] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#084848] transition-colors"
+            >
+              Upload Documents
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (success) {
@@ -132,8 +213,8 @@ export default function VendorWithdraw() {
               <div className="bg-gray-50 rounded-lg p-4">
                 <p className="text-sm font-medium text-[#2D3E50] mb-2">Account details</p>
                 <div className="space-y-1 text-sm">
-                  <p className="text-gray-600">Account Number: 0123456789</p>
-                  <p className="text-gray-600">Account Name: Ade's Photography</p>
+                  <p className="text-gray-600">Account Number: {vendor.bankDetails.accountNumber}</p>
+                  <p className="text-gray-600">Account Name: {vendor.bankDetails.accountName}</p>
                 </div>
               </div>
             )}

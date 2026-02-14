@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useEffect,useState } from 'react'
+import { useEffect, useState } from 'react'
 import { 
   MagnifyingGlassIcon, 
   ShieldCheckIcon,
@@ -15,20 +15,48 @@ import {
   CheckBadgeIcon,
   EnvelopeIcon,
   PhoneIcon,
-    CurrencyDollarIcon,
-  ChevronRightIcon
+  CurrencyDollarIcon,
+  ChevronRightIcon,
+  ArrowDownTrayIcon
 } from '@heroicons/react/24/outline'
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid'
-// import { useState } from 'react'
 
 export default function LandingPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   
-  // ✅ useEffect correctly placed INSIDE the component
+  // ✅ PWA Install States
+  const [deferredPrompt, setDeferredPrompt] = useState(null)
+  const [showInstallButton, setShowInstallButton] = useState(false)
+
+  // ✅ useEffect for scroll to top
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
+
+  // ✅ PWA Install Effect
+  useEffect(() => {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault()
+      setDeferredPrompt(e)
+      setShowInstallButton(true)
+    })
+  }, [])
+
+  // ✅ PWA Install Handler
+  const handleInstallClick = () => {
+    if (!deferredPrompt) return
+    
+    deferredPrompt.prompt()
+    
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the install prompt')
+      }
+      setDeferredPrompt(null)
+      setShowInstallButton(false)
+    })
+  }
 
   const categories = [
     { name: 'Photography', icon: CameraIcon, count: '124 vendors' },
@@ -40,33 +68,6 @@ export default function LandingPage() {
     { name: 'Videography', icon: VideoCameraIcon, count: '41 vendors' },
     { name: 'Wedding planning', icon: CalendarIcon, count: '33 vendors' }
   ]
-
-// Add this state at the top
-const [deferredPrompt, setDeferredPrompt] = useState(null)
-const [showInstallButton, setShowInstallButton] = useState(false)
-
-// Add this useEffect
-useEffect(() => {
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault()
-    setDeferredPrompt(e)
-    setShowInstallButton(true)
-  })
-}, [])
-
-const handleInstallClick = () => {
-  if (!deferredPrompt) return
-  
-  deferredPrompt.prompt()
-  
-  deferredPrompt.userChoice.then((choiceResult) => {
-    if (choiceResult.outcome === 'accepted') {
-      console.log('User accepted the install prompt')
-    }
-    setDeferredPrompt(null)
-    setShowInstallButton(false)
-  })
-}
 
   // TP LIST VENDORS ONLY - Verified vendors that show in this section
   const featuredVendors = [
@@ -125,9 +126,14 @@ const handleInstallClick = () => {
           from { opacity: 0; transform: scale(0.95); }
           to { opacity: 1; transform: scale(1); }
         }
+        @keyframes bounce {
+          0%, 100% { transform: translateX(-50%) translateY(0); }
+          50% { transform: translateX(-50%) translateY(-10px); }
+        }
         .animate-fadeInUp { animation: fadeInUp 0.6s ease-out forwards; }
         .animate-fadeIn { animation: fadeIn 0.8s ease-out forwards; }
         .animate-scaleIn { animation: scaleIn 0.5s ease-out forwards; }
+        .animate-bounce { animation: bounce 2s infinite; }
         .delay-100 { animation-delay: 0.1s; }
         .delay-200 { animation-delay: 0.2s; }
         .delay-300 { animation-delay: 0.3s; }
@@ -155,7 +161,6 @@ const handleInstallClick = () => {
             <Link to="/how-it-works" className="text-[#2D3E50] hover:text-[#0A5C5C] font-medium transition-colors">
               How it works
             </Link>
-          
             <Link
               to="/vendor/signup"
               className="border border-[#0A5C5C] text-[#0A5C5C] px-4 py-2 rounded-lg hover:bg-[#0A5C5C] hover:text-white transition-colors"
@@ -674,7 +679,7 @@ const handleInstallClick = () => {
         </div>
       </div>
 
-      {/* FOOTER - With all links you requested */}
+      {/* FOOTER */}
       <div className="bg-white border-t border-gray-200 py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           
@@ -743,6 +748,17 @@ const handleInstallClick = () => {
           </div>
         </div>
       </div>
+
+      {/* ✅ FLOATING PWA INSTALL BUTTON - ADDED HERE */}
+      {showInstallButton && (
+        <button
+          onClick={handleInstallClick}
+          className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-[#FFB347] text-[#2D3E50] px-6 py-3 rounded-full shadow-lg hover:bg-[#f0a83c] transition-all duration-300 flex items-center gap-2 font-medium animate-bounce"
+        >
+          <ArrowDownTrayIcon className="w-5 h-5" />
+          <span>Install Safe-Pay App</span>
+        </button>
+      )}
     </div>
   )
 }
