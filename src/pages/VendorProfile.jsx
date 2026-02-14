@@ -42,7 +42,7 @@ export default function VendorProfile() {
                   id === '3' ? 'Decor' : 
                   id === '6' ? 'Makeup' : 'Photography',
         rating: 4.9,
-        reviews: 124,
+        totalReviews: 124,
         location: 'Ikeja, Lagos',
         price: '₦350,000 - ₦600,000',
         priceMin: 350000,
@@ -227,7 +227,7 @@ export default function VendorProfile() {
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <StarIcon className="w-4 h-4 text-[#0A5C5C]" />
-                  <span className="text-gray-600">{vendor.rating} rating ({vendor.reviews} reviews)</span>
+                  <span className="text-gray-600">{vendor.rating} rating ({vendor.totalReviews} reviews)</span>
                 </div>
               </div>
             </div>
@@ -276,25 +276,28 @@ export default function VendorProfile() {
                     ))}
                   </div>
                   <span className="text-sm font-medium">{vendor.rating}</span>
-                  <span className="text-sm text-gray-500">({vendor.reviews} reviews)</span>
+                  <span className="text-sm text-gray-500">({vendor.totalReviews} reviews)</span>
                 </div>
               </div>
 
               <div className="space-y-4">
-                {(showAllReviews ? vendor.reviews : vendor.reviews.slice(0, 2)).map((review) => (
-                  <div key={review.id} className="border-b border-gray-100 last:border-0 pb-4 last:pb-0">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium text-[#2D3E50]">{review.client}</span>
-                      <span className="text-xs text-gray-400">{review.date}</span>
+                {(showAllReviews ? vendor.reviews : vendor.reviews.slice(0, 2)).map((review) => {
+                  // ✅ Make sure we're returning valid JSX
+                  return (
+                    <div key={review.id} className="border-b border-gray-100 last:border-0 pb-4 last:pb-0">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-[#2D3E50]">{review.client}</span>
+                        <span className="text-xs text-gray-400">{review.date}</span>
+                      </div>
+                      <div className="flex items-center gap-1 mb-2">
+                        {[1,2,3,4,5].map((star) => (
+                          <StarIconSolid key={star} className={`w-3 h-3 ${star <= review.rating ? 'text-[#FFB347]' : 'text-gray-200'}`} />
+                        ))}
+                      </div>
+                      <p className="text-sm text-gray-600">{review.comment}</p>
                     </div>
-                    <div className="flex items-center gap-1 mb-2">
-                      {[1,2,3,4,5].map((star) => (
-                        <StarIconSolid key={star} className={`w-3 h-3 ${star <= review.rating ? 'text-[#FFB347]' : 'text-gray-200'}`} />
-                      ))}
-                    </div>
-                    <p className="text-sm text-gray-600">{review.comment}</p>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
 
               {vendor.reviews.length > 2 && !showAllReviews && (
@@ -302,7 +305,7 @@ export default function VendorProfile() {
                   onClick={() => setShowAllReviews(true)}
                   className="mt-4 text-[#0A5C5C] text-sm font-medium hover:underline"
                 >
-                  View all {vendor.reviews} reviews →
+                  View all {vendor.totalReviews} reviews →
                 </button>
               )}
             </div>

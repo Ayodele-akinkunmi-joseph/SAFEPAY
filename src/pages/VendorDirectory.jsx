@@ -27,7 +27,7 @@ export default function VendorDirectory() {
   const [sortBy, setSortBy] = useState('recommended')
   const [showSortMenu, setShowSortMenu] = useState(false)
 
-  // FIX 1: Scroll to top when page loads
+  // Scroll to top when page loads
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
@@ -201,7 +201,7 @@ export default function VendorDirectory() {
   const filteredVendors = allVendors.filter(vendor => {
     const matchesSearch = vendor.name.toLowerCase().includes(search.toLowerCase()) ||
                          vendor.category.toLowerCase().includes(search.toLowerCase()) ||
-                         vendor.specialties.some(s => s.toLowerCase().includes(search.toLowerCase()))
+                         (vendor.specialties && vendor.specialties.some(s => s.toLowerCase().includes(search.toLowerCase())))
     const matchesCategory = selectedCategory === 'All' || vendor.category === selectedCategory
     const matchesLocation = selectedLocation === 'All' || vendor.location.includes(selectedLocation)
     return matchesSearch && matchesCategory && matchesLocation
@@ -232,28 +232,15 @@ export default function VendorDirectory() {
   return (
     <div className="min-h-screen bg-[#FDF8F2]">
       
-      {/* ANIMATION STYLES */}
+      {/* Animation Styles */}
       <style>{`
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
         }
         
-        @keyframes glowPulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(255, 179, 71, 0.4); }
-          50% { box-shadow: 0 0 20px 10px rgba(255, 179, 71, 0.2); }
-        }
-        
         .animate-fadeInUp {
           animation: fadeInUp 0.6s ease-out forwards;
-        }
-        
-        .animate-glowPulse {
-          animation: glowPulse 2s infinite;
-        }
-        
-        .tp-list-card {
-          animation: glowPulse 3s infinite;
         }
         
         .delay-100 { animation-delay: 0.1s; }
@@ -275,7 +262,7 @@ export default function VendorDirectory() {
               <span className="text-xl font-bold text-[#0A5C5C] hidden sm:block">Safe-Pay</span>
             </Link>
             
-            {/* Search Bar - Mobile Optimized */}
+            {/* Search Bar */}
             <div className="flex-1 max-w-2xl mx-4">
               <div className="relative">
                 <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -308,7 +295,7 @@ export default function VendorDirectory() {
         </div>
       </div>
 
-      {/* Mobile Filter Modal - FIXED: Now scrollable! */}
+      {/* Mobile Filter Modal */}
       {showFilters && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden animate-fadeInUp">
           <div className="absolute right-0 top-0 h-full w-80 bg-white shadow-xl flex flex-col">
@@ -324,7 +311,7 @@ export default function VendorDirectory() {
               </button>
             </div>
             
-            {/* Scrollable Content - FIXED! */}
+            {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto p-6">
               <div className="space-y-6">
                 
@@ -524,124 +511,82 @@ export default function VendorDirectory() {
                 <Link
                   key={vendor.id}
                   to={`/vendor/${vendor.id}`}
-                  className={`group animate-fadeInUp ${vendor.tpList ? 'tp-list-card' : ''}`}
+                  className="group animate-fadeInUp"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   {/* TP LIST VENDOR - PREMIUM DESIGN */}
                   {vendor.tpList ? (
-                    <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-2 border-[#FFB347] relative h-full">
+                    <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 border-[#FFB347]">
                       
-                      {/* Gold Glow Effect */}
-                      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#FFB347] to-[#FFD700] rounded-2xl opacity-30 blur group-hover:opacity-60 transition-opacity"></div>
+                      {/* TP List Badge */}
+                      <div className="absolute top-4 right-4 z-10">
+                        <div className="bg-[#FFB347] text-[#2D3E50] px-3 py-1 rounded-full flex items-center gap-1 text-xs font-bold">
+                          <StarIconSolid className="w-3 h-3" />
+                          TP LIST
+                        </div>
+                      </div>
                       
-                      <div className="relative bg-white h-full">
-                        
-                        {/* TP List Badge - Prominent */}
-                        <div className="absolute top-4 right-4 z-20">
-                          <div className="bg-gradient-to-r from-[#FFB347] to-[#FFA07A] text-[#2D3E50] px-4 py-2 rounded-full flex items-center gap-1.5 shadow-lg">
-                            <StarIconSolid className="w-4 h-4" />
-                            <span className="font-bold text-sm">TP LIST</span>
+                      {/* Verified Badge */}
+                      {vendor.verified && (
+                        <div className="absolute top-4 left-4 z-10">
+                          <div className="bg-green-500 text-white px-2 py-1 rounded-full flex items-center gap-1 text-xs">
+                            <CheckBadgeIcon className="w-3 h-3" />
+                            Verified
                           </div>
                         </div>
-                        
-                        {/* Verified Badge */}
-                        {vendor.verified && (
-                          <div className="absolute top-4 left-4 z-20">
-                            <div className="bg-green-500 text-white px-3 py-1.5 rounded-full flex items-center gap-1.5 text-xs shadow-lg">
-                              <CheckBadgeIcon className="w-3 h-3" />
-                              <span>Verified</span>
-                            </div>
-                          </div>
-                        )}
-                        
-                        {/* Header with Gradient */}
-                        <div className="h-32 bg-gradient-to-r from-[#0A5C5C] to-[#084848] relative">
-                          <div className="absolute -bottom-8 left-6">
-                            <div className="w-20 h-20 bg-white rounded-xl flex items-center justify-center shadow-xl border-4 border-[#FFB347] transform group-hover:rotate-12 transition-transform duration-500">
-                              <span className="text-3xl font-bold text-[#0A5C5C]">{vendor.image}</span>
-                            </div>
+                      )}
+                      
+                      {/* Header */}
+                      <div className="h-28 bg-[#0A5C5C] relative">
+                        <div className="absolute -bottom-8 left-6">
+                          <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-lg border-2 border-[#FFB347]">
+                            <span className="text-2xl font-bold text-[#0A5C5C]">{vendor.image}</span>
                           </div>
                         </div>
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="pt-10 p-5">
+                        <h3 className="font-bold text-lg text-[#2D3E50]">{vendor.name}</h3>
+                        <p className="text-xs text-gray-500">{vendor.category}</p>
                         
-                        {/* Content */}
-                        <div className="pt-14 p-6">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-bold text-xl text-[#2D3E50] group-hover:text-[#0A5C5C] transition-colors">
-                                {vendor.name}
-                              </h3>
-                              <p className="text-sm text-gray-500">{vendor.category}</p>
-                            </div>
-                            <span className="bg-[#FFB347] bg-opacity-20 text-[#8B691B] text-xs px-2 py-1 rounded-full font-medium">
-                              {vendor.responseTime}
-                            </span>
-                          </div>
-                          
-                          {/* Rating */}
-                          <div className="flex items-center gap-1 mt-3">
-                            <div className="flex">
-                              {[...Array(5)].map((_, i) => (
-                                <StarIconSolid
-                                  key={i}
-                                  className={`w-4 h-4 ${
-                                    i < Math.floor(vendor.rating)
-                                      ? 'text-[#FFB347]'
-                                      : 'text-gray-200'
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                            <span className="text-sm font-bold text-[#2D3E50] ml-1">{vendor.rating}</span>
-                            <span className="text-xs text-gray-500">({vendor.reviews} reviews)</span>
-                          </div>
-                          
-                          {/* Location */}
-                          <div className="flex items-center gap-1 mt-3 text-sm text-gray-500">
-                            <MapPinIcon className="w-4 h-4 text-[#0A5C5C]" />
-                            <span>{vendor.location}</span>
-                            <span className="mx-1">•</span>
-                            <span className="text-xs bg-gray-100 px-2 py-0.5 rounded-full">{vendor.experience}</span>
-                          </div>
-                          
-                          {/* Specialties */}
-                          <div className="flex flex-wrap gap-2 mt-3">
-                            {vendor.specialties.slice(0, 3).map((specialty, i) => (
-                              <span key={i} className="text-xs bg-[#FFB347] bg-opacity-10 text-[#8B691B] px-2 py-1 rounded-full">
-                                {specialty}
-                              </span>
+                        {/* Rating */}
+                        <div className="flex items-center gap-1 mt-2">
+                          <div className="flex">
+                            {[...Array(5)].map((_, i) => (
+                              <StarIconSolid
+                                key={i}
+                                className={`w-3 h-3 ${
+                                  i < Math.floor(vendor.rating) ? 'text-[#FFB347]' : 'text-gray-200'
+                                }`}
+                              />
                             ))}
-                            {vendor.specialties.length > 3 && (
-                              <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
-                                +{vendor.specialties.length - 3}
-                              </span>
-                            )}
                           </div>
-                          
-                          {/* Events Completed */}
-                          <div className="mt-3 text-xs text-gray-500">
-                            <span className="font-medium">{vendor.eventsCompleted}</span> events completed
-                          </div>
-                          
-                          {/* Price and CTA */}
-                          <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                            <div>
-                              <span className="text-xs text-gray-500 block">Starting from</span>
-                              <span className="font-bold text-[#0A5C5C] text-xl">₦{vendor.priceMin.toLocaleString()}</span>
-                            </div>
-                            <div className="bg-[#0A5C5C] text-white px-6 py-2.5 rounded-lg font-medium hover:bg-[#084848] transition-all transform hover:scale-105 hover:shadow-lg flex items-center gap-2">
-                              Book now
-                              <span className="group-hover:translate-x-1 transition-transform">→</span>
-                            </div>
-                          </div>
+                          <span className="text-xs font-medium ml-1">{vendor.rating}</span>
+                          <span className="text-xs text-gray-500">({vendor.reviews})</span>
+                        </div>
+                        
+                        {/* Location */}
+                        <div className="flex items-center gap-1 mt-2 text-xs text-gray-500">
+                          <MapPinIcon className="w-3 h-3" />
+                          <span>{vendor.location}</span>
+                        </div>
+                        
+                        {/* Price */}
+                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+                          <span className="font-bold text-[#0A5C5C]">₦{vendor.priceMin.toLocaleString()}+</span>
+                          <span className="text-sm font-medium text-[#0A5C5C] group-hover:underline">
+                            View profile →
+                          </span>
                         </div>
                       </div>
                     </div>
                   ) : (
-                    /* REGULAR VENDOR - Normal Design */
-                    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 h-full">
-                      <div className="h-28 bg-gradient-to-r from-gray-700 to-gray-800 relative">
+                    /* REGULAR VENDOR */
+                    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                      <div className="h-28 bg-gray-700 relative">
                         <div className="absolute -bottom-7 left-6">
-                          <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-lg border-4 border-white">
+                          <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-lg border-2 border-white">
                             <span className="text-2xl font-bold text-gray-700">{vendor.image}</span>
                           </div>
                         </div>
@@ -649,7 +594,7 @@ export default function VendorDirectory() {
                       
                       <div className="pt-10 p-5">
                         <h3 className="font-bold text-lg text-[#2D3E50]">{vendor.name}</h3>
-                        <p className="text-xs text-gray-500 mt-0.5">{vendor.category}</p>
+                        <p className="text-xs text-gray-500">{vendor.category}</p>
                         
                         <div className="flex items-center gap-1 mt-2">
                           <div className="flex">
@@ -673,9 +618,9 @@ export default function VendorDirectory() {
                         
                         <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
                           <span className="font-bold text-gray-700">₦{vendor.priceMin.toLocaleString()}+</span>
-                          <button className="bg-gray-100 text-gray-700 px-4 py-1.5 rounded-lg text-xs hover:bg-gray-200 transition-all">
-                            View profile
-                          </button>
+                          <span className="text-sm font-medium text-[#0A5C5C] group-hover:underline">
+                            View profile →
+                          </span>
                         </div>
                       </div>
                     </div>
