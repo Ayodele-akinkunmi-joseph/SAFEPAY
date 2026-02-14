@@ -4,20 +4,19 @@ import {
   EnvelopeIcon, 
   LockClosedIcon, 
   ArrowPathIcon,
-  ArrowLeftIcon,      // ✅ Back button icon
-  EyeIcon,            // ✅ Eye icon for show password
-  EyeSlashIcon        // ✅ Eye slash for hide password
+  ArrowLeftIcon,
+  EyeIcon,
+  EyeSlashIcon
 } from '@heroicons/react/24/outline'
 
 export default function VendorLogin() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)  // ✅ Toggle password visibility
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  // ✅ Scroll to top on page load
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
@@ -27,7 +26,6 @@ export default function VendorLogin() {
     setLoading(true)
     setError('')
     
-    // Mock login - replace with Supabase
     setTimeout(() => {
       if (email === 'ade@photography.com' && password === 'password') {
         localStorage.setItem('vendor', JSON.stringify({
@@ -47,15 +45,24 @@ export default function VendorLogin() {
   return (
     <div className="min-h-screen bg-[#FDF8F2] p-4">
       
-      {/* ✅ Back Button - Navigate to home */}
+      {/* Navigation Bar */}
       <div className="max-w-md mx-auto pt-4">
-        <button
-          onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-[#0A5C5C] hover:text-[#084848] transition-colors group mb-4"
-        >
-          <ArrowLeftIcon className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-          <span>Back to home</span>
-        </button>
+        <div className="flex items-center justify-between mb-6">
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2 text-[#0A5C5C] hover:text-[#084848] transition-colors group"
+          >
+            <ArrowLeftIcon className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            <span>Back to home</span>
+          </button>
+          
+          <Link
+            to="/vendor/tp-list"
+            className="text-sm bg-[#FFB347] text-[#2D3E50] px-3 py-1 rounded-full hover:bg-[#f0a83c] transition-colors"
+          >
+            TP List
+          </Link>
+        </div>
       </div>
 
       <div className="w-full max-w-md mx-auto">
@@ -111,14 +118,13 @@ export default function VendorLogin() {
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}  // ✅ Toggle between text/password
+                  type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0A5C5C] focus:border-transparent bg-gray-50 transition-all pr-12"
                   placeholder="••••••••"
                 />
-                {/* ✅ Eye button to toggle visibility */}
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -133,12 +139,18 @@ export default function VendorLogin() {
               </div>
             </div>
             
-            {/* Remember me - Removed forgot password link */}
-            <div className="flex items-center">
+            {/* Remember me and Forgot Password */}
+            <div className="flex items-center justify-between">
               <label className="flex items-center gap-2">
                 <input type="checkbox" className="rounded border-gray-300 text-[#0A5C5C] focus:ring-[#0A5C5C]" />
                 <span className="text-sm text-gray-600">Remember me</span>
               </label>
+              <Link 
+                to="/vendor/forgot-password" 
+                className="text-sm text-[#0A5C5C] hover:underline"
+              >
+                Forgot password?
+              </Link>
             </div>
             
             {/* Submit Button */}

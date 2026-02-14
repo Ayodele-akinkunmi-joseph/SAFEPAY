@@ -9,14 +9,14 @@ import {
   LockClosedIcon,
   EyeIcon,
   EyeSlashIcon,
-  ArrowLeftIcon
+  ArrowLeftIcon,
+  InformationCircleIcon
 } from '@heroicons/react/24/outline'
 import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid'
 
 export default function VendorSignup() {
   const navigate = useNavigate()
   
-  // Scroll to top on page load
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
@@ -34,6 +34,7 @@ export default function VendorSignup() {
   const [agreeTerms, setAgreeTerms] = useState(false)
   const [passwordStrength, setPasswordStrength] = useState(0)
   const [passwordError, setPasswordError] = useState('')
+  const [showDocsPrompt, setShowDocsPrompt] = useState(false)
   
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -42,27 +43,18 @@ export default function VendorSignup() {
       [name]: value
     })
     
-    // Check password strength when password field changes
     if (name === 'password') {
       checkPasswordStrength(value)
     }
   }
   
-  // Password strength checker
   const checkPasswordStrength = (password) => {
     let strength = 0
     
-    // Length check
     if (password.length >= 8) strength += 1
     if (password.length >= 12) strength += 1
-    
-    // Contains number
     if (/\d/.test(password)) strength += 1
-    
-    // Contains uppercase
     if (/[A-Z]/.test(password)) strength += 1
-    
-    // Contains special character
     if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength += 1
     
     setPasswordStrength(strength)
@@ -71,36 +63,42 @@ export default function VendorSignup() {
   const handleSubmit = (e) => {
     e.preventDefault()
     
-    // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
       setPasswordError('Passwords do not match')
       return
     }
     
-    // Validate password strength
     if (passwordStrength < 3) {
       setPasswordError('Password is too weak. Use at least 8 characters with numbers and symbols')
       return
     }
     
-    // Validate terms agreement
     if (!agreeTerms) {
       alert('Please agree to the Terms of Service and Privacy Policy')
       return
     }
     
-    // Store in localStorage for demo (remove password before storing)
+    // Store vendor data
     const { password, confirmPassword, ...vendorData } = formData
     localStorage.setItem('vendor', JSON.stringify({
       ...vendorData,
-      id: 'vendor_' + Date.now()
+      id: 'vendor_' + Date.now(),
+      documents: {
+        cac: 'pending',
+        id: 'pending',
+        address: 'pending'
+      }
     }))
     
-    // Redirect to dashboard
-    navigate('/vendor/dashboard')
+    // Show document upload prompt
+    setShowDocsPrompt(true)
+    
+    // Redirect to documents page after short delay
+    setTimeout(() => {
+      navigate('/vendor/documents')
+    }, 2000)
   }
   
-  // Password strength color
   const getStrengthColor = () => {
     if (passwordStrength <= 2) return 'bg-red-500'
     if (passwordStrength <= 4) return 'bg-yellow-500'
@@ -117,8 +115,8 @@ export default function VendorSignup() {
     <div className="min-h-screen bg-[#FDF8F2] py-12">
       <div className="max-w-2xl mx-auto px-4">
         
-        {/* Back button */}
-        <div className="mb-6">
+        {/* Navigation Bar */}
+        <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => navigate('/')}
             className="inline-flex items-center gap-2 text-[#0A5C5C] hover:text-[#084848] transition-colors group"
@@ -126,7 +124,39 @@ export default function VendorSignup() {
             <ArrowLeftIcon className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
             <span>Back to home</span>
           </button>
+          
+          <div className="flex items-center gap-4">
+            <Link 
+              to="/vendor/login" 
+              className="text-sm text-[#0A5C5C] hover:text-[#084848] transition-colors"
+            >
+              Sign in
+            </Link>
+            <Link
+              to="/vendor/tp-list"
+              className="text-sm bg-[#FFB347] text-[#2D3E50] px-3 py-1 rounded-full hover:bg-[#f0a83c] transition-colors"
+            >
+              TP List
+            </Link>
+          </div>
         </div>
+        
+        {/* Success Prompt */}
+        {showDocsPrompt && (
+          <div className="mb-6 bg-green-50 border border-green-200 rounded-xl p-4 animate-fadeInUp">
+            <div className="flex items-start gap-3">
+              <CheckBadgeIcon className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm text-green-800 font-medium">
+                  Account created successfully!
+                </p>
+                <p className="text-xs text-green-600 mt-1">
+                  Redirecting you to upload verification documents...
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
         
         <div className="bg-white rounded-3xl shadow-xl border border-[#E67A4C] border-opacity-20 overflow-hidden">
           
@@ -366,6 +396,17 @@ export default function VendorSignup() {
                   )}
                 </div>
               )}
+            </div>
+            
+            {/* Document Notice */}
+            <div className="bg-blue-50 rounded-lg p-4">
+              <div className="flex items-start gap-2">
+                <InformationCircleIcon className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-blue-700">
+                  After registration, you'll need to upload verification documents (CAC, ID, Address) 
+                  to get verified and start receiving bookings.
+                </p>
+              </div>
             </div>
             
             {/* Terms agreement */}

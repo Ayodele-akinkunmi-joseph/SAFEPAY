@@ -41,6 +41,33 @@ export default function LandingPage() {
     { name: 'Wedding planning', icon: CalendarIcon, count: '33 vendors' }
   ]
 
+// Add this state at the top
+const [deferredPrompt, setDeferredPrompt] = useState(null)
+const [showInstallButton, setShowInstallButton] = useState(false)
+
+// Add this useEffect
+useEffect(() => {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault()
+    setDeferredPrompt(e)
+    setShowInstallButton(true)
+  })
+}, [])
+
+const handleInstallClick = () => {
+  if (!deferredPrompt) return
+  
+  deferredPrompt.prompt()
+  
+  deferredPrompt.userChoice.then((choiceResult) => {
+    if (choiceResult.outcome === 'accepted') {
+      console.log('User accepted the install prompt')
+    }
+    setDeferredPrompt(null)
+    setShowInstallButton(false)
+  })
+}
+
   // TP LIST VENDORS ONLY - Verified vendors that show in this section
   const featuredVendors = [
     {

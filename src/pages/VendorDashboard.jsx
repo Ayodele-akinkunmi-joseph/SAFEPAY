@@ -55,7 +55,9 @@ export default function VendorDashboard() {
       setLoading(false)
     }, 1000)
   }, [])
-
+const pendingDocs = vendor?.documents 
+  ? Object.values(vendor.documents).filter(d => d === 'pending').length 
+  : 0
   const handleLogout = () => {
     localStorage.removeItem('vendor')
     window.location.href = '/'
@@ -414,6 +416,18 @@ export default function VendorDashboard() {
                   <Cog6ToothIcon className="w-5 h-5 text-[#0A5C5C]" />
                   <span className="text-sm text-gray-700">Account Settings</span>
                 </Link>
+                <Link
+                    to="/vendor/documents"
+                    className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    <DocumentTextIcon className="w-5 h-5 text-[#0A5C5C]" />
+                    <span className="text-sm text-gray-700">Verification Documents</span>
+                    {pendingDocs > 0 && (
+                      <span className="ml-auto bg-yellow-100 text-yellow-600 text-xs px-2 py-0.5 rounded-full">
+                        {pendingDocs} pending
+                      </span>
+                    )}
+                  </Link>
                 <Link
                   to="/vendor/analytics"
                   className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"

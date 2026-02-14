@@ -7,16 +7,18 @@ import PricingPage from './pages/PricingPage'
 import TPListPage from './pages/TPListPage'
 import VendorSignup from './pages/VendorSignup'
 import VendorLogin from './pages/VendorLogin'
+import VendorForgotPassword from './pages/VendorForgotPassword'
 import VendorDashboard from './pages/VendorDashboard'
 import VendorDirectory from './pages/VendorDirectory'
 import VendorProfile from './pages/VendorProfile'
 import VendorUpgrade from './pages/VendorUpgrade'
+import VendorDocuments from './pages/VendorDocuments'
 import PaymentPage from './pages/PaymentPage'
 import PaymentSuccess from './pages/PaymentSuccess'
 import ChatPage from './pages/ChatPage'
 import BookingPage from './pages/BookingPage'
+import AdminDashboard from './pages/AdminDashboard'
 
-// NEW IMPORTS - Add these!
 import VendorPortfolio from './pages/VendorPortfolio'
 import VendorSettings from './pages/VendorSettings'
 import VendorAnalytics from './pages/VendorAnalytics'
@@ -26,10 +28,31 @@ import VendorWithdraw from './pages/VendorWithdraw'
 import VendorTransactions from './pages/VendorTransactions'
 import Notifications from './pages/Notifications'
 
+
+import AdminNotifications from './pages/AdminNotifications'
+import AdminPendingApprovals from './pages/AdminPendingApprovals'
+import AdminWithdrawals from './pages/AdminWithdrawals'
+import AdminReports from './pages/AdminReports'
+import AdminManageVendor from './pages/AdminManageVendor'
+import AdminTransactions from './pages/AdminTransactions'
+import AdminDisputeReview from './pages/AdminDisputeReview'
+import AdminUsers from './pages/AdminUsers'
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/notifications" element={<AdminNotifications />} />
+        <Route path="/admin/vendors/pending" element={<AdminPendingApprovals />} />
+        <Route path="/admin/withdrawals" element={<AdminWithdrawals />} />
+        <Route path="/admin/reports" element={<AdminReports />} />
+        <Route path="/admin/vendors/manage/:id" element={<AdminManageVendor />} />
+        <Route path="/admin/transactions" element={<AdminTransactions />} />
+        <Route path="/admin/disputes/:id" element={<AdminDisputeReview />} />
+        <Route path="/admin/users" element={<AdminUsers />} />
+
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
@@ -48,8 +71,10 @@ function App() {
         {/* Vendor Routes - Authentication Required */}
         <Route path="/vendor/signup" element={<VendorSignup />} />
         <Route path="/vendor/login" element={<VendorLogin />} />
+        <Route path="/vendor/forgot-password" element={<VendorForgotPassword />} />
         <Route path="/vendor/dashboard" element={<VendorDashboard />} />
         <Route path="/vendor/upgrade" element={<VendorUpgrade />} />
+        <Route path="/vendor/documents" element={<VendorDocuments />} />
         
         {/* NEW Vendor Management Routes */}
         <Route path="/vendor/portfolio" element={<VendorPortfolio />} />
