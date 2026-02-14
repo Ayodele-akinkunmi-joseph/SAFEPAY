@@ -28,34 +28,74 @@ export default function LandingPage() {
   // ✅ PWA Install States
   const [deferredPrompt, setDeferredPrompt] = useState(null)
   const [showInstallButton, setShowInstallButton] = useState(false)
+  const [isInstalled, setIsInstalled] = useState(false)
 
   // ✅ useEffect for scroll to top
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
 
-  // ✅ PWA Install Effect
+  // ✅ Check if already installed
   useEffect(() => {
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault()
-      setDeferredPrompt(e)
-      setShowInstallButton(true)
-    })
+    // Check if app is running in standalone mode (already installed)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                         window.navigator.standalone ||
+                         document.referrer.includes('android-app://')
+    
+    if (isStandalone) {
+      setIsInstalled(true)
+    }
   }, [])
 
+  // ✅ PWA Install Effect
+  useEffect(() => {
+    // Don't show install button if already installed
+    if (isInstalled) return
+
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault()
+      setDeferredPrompt(e)
+      // Show button after 2 seconds
+      setTimeout(() => setShowInstallButton(true), 2000)
+    }
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+
+    // For testing - simulate after 5 seconds if no prompt
+    const timeout = setTimeout(() => {
+      if (!deferredPrompt && !isInstalled) {
+        // Just for testing, show button anyway
+        setShowInstallButton(true)
+      }
+    }, 5000)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+      clearTimeout(timeout)
+    }
+  }, [isInstalled, deferredPrompt])
+
   // ✅ PWA Install Handler
-  const handleInstallClick = () => {
-    if (!deferredPrompt) return
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) {
+      alert('To install, look for "Add to Home Screen" in your browser menu')
+      return
+    }
     
-    deferredPrompt.prompt()
-    
-    deferredPrompt.userChoice.then((choiceResult) => {
+    try {
+      await deferredPrompt.prompt()
+      const choiceResult = await deferredPrompt.userChoice
+      
       if (choiceResult.outcome === 'accepted') {
         console.log('User accepted the install prompt')
+        setShowInstallButton(false)
+        setIsInstalled(true)
       }
       setDeferredPrompt(null)
-      setShowInstallButton(false)
-    })
+    } catch (error) {
+      console.log('Install error:', error)
+      alert('To install, look for "Add to Home Screen" in your browser menu')
+    }
   }
 
   const categories = [
