@@ -10,10 +10,21 @@ import VendorLogin from './pages/VendorLogin'
 import VendorDashboard from './pages/VendorDashboard'
 import VendorDirectory from './pages/VendorDirectory'
 import VendorProfile from './pages/VendorProfile'
+import VendorUpgrade from './pages/VendorUpgrade'
 import PaymentPage from './pages/PaymentPage'
 import PaymentSuccess from './pages/PaymentSuccess'
 import ChatPage from './pages/ChatPage'
 import BookingPage from './pages/BookingPage'
+
+// NEW IMPORTS - Add these!
+import VendorPortfolio from './pages/VendorPortfolio'
+import VendorSettings from './pages/VendorSettings'
+import VendorAnalytics from './pages/VendorAnalytics'
+import VendorCalendar from './pages/VendorCalendar'
+import ManageSubscription from './pages/ManageSubscription'
+import VendorWithdraw from './pages/VendorWithdraw'
+import VendorTransactions from './pages/VendorTransactions'
+import Notifications from './pages/Notifications'
 
 function App() {
   return (
@@ -34,10 +45,21 @@ function App() {
         <Route path="/pay/:reference" element={<PaymentPage />} />
         <Route path="/success/:reference" element={<PaymentSuccess />} />
         
-        {/* Vendor Routes */}
+        {/* Vendor Routes - Authentication Required */}
         <Route path="/vendor/signup" element={<VendorSignup />} />
         <Route path="/vendor/login" element={<VendorLogin />} />
         <Route path="/vendor/dashboard" element={<VendorDashboard />} />
+        <Route path="/vendor/upgrade" element={<VendorUpgrade />} />
+        
+        {/* NEW Vendor Management Routes */}
+        <Route path="/vendor/portfolio" element={<VendorPortfolio />} />
+        <Route path="/vendor/settings" element={<VendorSettings />} />
+        <Route path="/vendor/analytics" element={<VendorAnalytics />} />
+        <Route path="/vendor/calendar" element={<VendorCalendar />} />
+        <Route path="/vendor/tp-list/manage" element={<ManageSubscription />} />
+        <Route path="/vendor/withdraw" element={<VendorWithdraw />} />
+        <Route path="/vendor/transactions" element={<VendorTransactions />} />
+        <Route path="/vendor/notifications" element={<Notifications />} />
         
         {/* Communication */}
         <Route path="/chat/:reference" element={<ChatPage />} />

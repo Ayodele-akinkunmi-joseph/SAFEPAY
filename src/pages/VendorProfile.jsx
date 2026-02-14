@@ -232,7 +232,7 @@ export default function VendorProfile() {
               </div>
             </div>
 
-            {/* Portfolio Section */}
+            {/* PORTFOLIO SECTION - RESTORED */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-[#2D3E50] mb-4">Portfolio</h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -265,7 +265,7 @@ export default function VendorProfile() {
               )}
             </div>
 
-            {/* Reviews Section - FIXED! */}
+            {/* Reviews Section */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-[#2D3E50]">Reviews</h2>
@@ -282,7 +282,6 @@ export default function VendorProfile() {
 
               <div className="space-y-4">
                 {(showAllReviews ? vendor.reviews : vendor.reviews.slice(0, 2)).map((review) => {
-                  // ✅ Make sure we're returning valid JSX
                   return (
                     <div key={review.id} className="border-b border-gray-100 last:border-0 pb-4 last:pb-0">
                       <div className="flex items-center justify-between mb-2">
